@@ -3,25 +3,23 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import Logo from '@/components/Logo';
 import LoginForm from '@/components/LoginForm';
-import { FileText } from 'lucide-react';
+import FloatingElements from '@/components/FloatingElements';
+import StockChartPattern from '@/components/StockChartPattern';
 
 const Login = () => {
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-indigo-50 to-gray-100 flex flex-col items-center justify-center p-4">
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[20%] -left-12 w-64 h-64 bg-indigo-100 rounded-full opacity-70 filter blur-xl"></div>
-        <div className="absolute bottom-[30%] right-[10%] w-48 h-48 bg-blue-100 rounded-full opacity-70 filter blur-xl"></div>
-        <div className="absolute top-[40%] right-[20%] w-36 h-36 bg-purple-100 rounded-full opacity-70 filter blur-xl"></div>
-      </div>
+      <FloatingElements />
+      <StockChartPattern />
       
       <div className="w-full max-w-md z-10">
         <div className="flex justify-center mb-8">
           <Logo />
         </div>
         
-        <Card className="border-gray-200 shadow-lg">
+        <Card className="border-gray-200 shadow-sm backdrop-blur-sm bg-white/95">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold text-center text-indigo-800">
+            <CardTitle className="text-2xl font-bold text-center text-indigo-700">
               Sign in to NoteMate
             </CardTitle>
             <CardDescription className="text-center text-gray-500">

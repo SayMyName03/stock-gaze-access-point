@@ -7,6 +7,8 @@ import PdfUploader from '@/components/PdfUploader';
 import PdfChat from '@/components/PdfChat';
 import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
 import AppSidebar from '@/components/AppSidebar';
+import FloatingElements from '@/components/FloatingElements';
+import StockChartPattern from '@/components/StockChartPattern';
 
 const Index = () => {
   const [pdfContent, setPdfContent] = useState<string | null>(null);
@@ -27,10 +29,13 @@ const Index = () => {
               <SidebarTrigger />
             </div>
             
-            <div className="w-full max-w-5xl mx-auto mt-12">
-              <Card className="border-gray-200 shadow-lg mb-6">
+            <FloatingElements />
+            <StockChartPattern />
+            
+            <div className="w-full max-w-5xl mx-auto mt-12 z-10 relative">
+              <Card className="border-gray-200 shadow-sm mb-6 backdrop-blur-sm bg-white/95">
                 <CardHeader className="space-y-1">
-                  <CardTitle className="text-2xl font-bold text-center text-indigo-800">
+                  <CardTitle className="text-2xl font-bold text-center text-indigo-700">
                     NoteMate PDF Analyzer
                   </CardTitle>
                   <CardDescription className="text-center text-gray-500">
@@ -44,7 +49,7 @@ const Index = () => {
                       <div className="text-center mt-4">
                         <div className="text-sm text-gray-500">
                           Already have an account? 
-                          <Button variant="link" asChild className="px-2">
+                          <Button variant="link" asChild className="px-2 text-indigo-600">
                             <Link to="/login">Sign in</Link>
                           </Button>
                           to access your saved documents
