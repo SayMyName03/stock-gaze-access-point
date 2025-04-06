@@ -34,7 +34,7 @@ const Index = () => {
           </CardContent>
           <CardFooter className="flex flex-col text-center text-xs text-gray-500 border-t pt-4">
             <p>Secure login protected by 256-bit encryption</p>
-            <p>© 2025 StockGaze. All rights reserved.</p>
+            <p>© 2025 StockSage. All rights reserved.</p>
           </CardFooter>
         </Card>
         
