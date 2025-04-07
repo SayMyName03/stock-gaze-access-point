@@ -1,6 +1,6 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import axios from 'axios';
 import {
   BookText,
   Home,
@@ -10,7 +10,8 @@ import {
   Star,
   Tag,
   FileText,
-  Search
+  Search,
+  UploadCloud,
 } from 'lucide-react';
 import Logo from './Logo';
 import {
@@ -24,13 +25,43 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarFooter,
-  SidebarSeparator
+  SidebarSeparator,
 } from "@/components/ui/sidebar";
 
 export function AppSidebar() {
   const location = useLocation();
-  
-  // Menu items
+  const [uploading, setUploading] = useState(false);
+  const [analysisResult, setAnalysisResult] = useState(null);
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      // Retrieve the API key from the environment variable
+      const apiKey = process.env.REACT_APP_GEMINI_API_KEY;
+
+      const response = await axios.post('https://api.gemini.com/analyze', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${apiKey}`, // Use the API key from .env
+        },
+      });
+
+      setAnalysisResult(response.data);
+      console.log('Analysis Result:', response.data);
+    } catch (error) {
+      console.error('Error uploading file:', error);
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const mainItems = [
     {
       title: "Home",
@@ -97,6 +128,20 @@ export function AppSidebar() {
           <SidebarGroupLabel className="text-xs font-medium text-gray-500">Main</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild tooltip="Upload Document">
+                  <label className="cursor-pointer transition-colors">
+                    <UploadCloud className="text-gray-600" />
+                    <span>Upload Document</span>
+                    <input
+                      type="file"
+                      accept=".pdf,.doc,.docx"
+                      className="hidden"
+                      onChange={handleFileUpload}
+                    />
+                  </label>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
               {mainItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild tooltip={item.title} isActive={isActive(item.url)}>
@@ -156,6 +201,12 @@ export function AppSidebar() {
           <div className="text-xs text-gray-500">
             NoteMate AI Note Taking v1.0
           </div>
+          {uploading && <div className="text-xs text-blue-500">Uploading...</div>}
+          {analysisResult && (
+            <div className="text-xs text-green-500">
+              Analysis Complete: {JSON.stringify(analysisResult)}
+            </div>
+          )}
         </div>
       </SidebarFooter>
     </Sidebar>
