@@ -1,14 +1,16 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
-  FileText,
+  BookText,
   Home,
   LogIn,
   Settings,
-  Upload,
+  Plus,
   Star,
-  History
+  Tag,
+  FileText,
+  Search
 } from 'lucide-react';
 import Logo from './Logo';
 import {
@@ -22,9 +24,12 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarFooter,
+  SidebarSeparator
 } from "@/components/ui/sidebar";
 
 export function AppSidebar() {
+  const location = useLocation();
+  
   // Menu items
   const mainItems = [
     {
@@ -33,19 +38,32 @@ export function AppSidebar() {
       icon: Home,
     },
     {
-      title: "Upload PDF",
-      url: "/#upload",
-      icon: Upload,
+      title: "New Note",
+      url: "/#new",
+      icon: Plus,
     },
     {
-      title: "Recent PDFs",
-      url: "/#recent",
-      icon: History,
+      title: "Search Notes",
+      url: "/#search",
+      icon: Search,
+    },
+  ];
+
+  const categoriesItems = [
+    {
+      title: "All Notes",
+      url: "/#all",
+      icon: FileText,
     },
     {
-      title: "Saved Notes",
-      url: "/#saved",
+      title: "Favorites",
+      url: "/#favorites",
       icon: Star,
+    },
+    {
+      title: "Tags",
+      url: "/#tags",
+      icon: Tag,
     },
   ];
 
@@ -62,6 +80,11 @@ export function AppSidebar() {
     },
   ];
 
+  const isActive = (url: string) => {
+    if (url === "/") return location.pathname === "/";
+    return location.pathname.startsWith(url);
+  };
+
   return (
     <Sidebar>
       <SidebarHeader className="border-b">
@@ -76,7 +99,7 @@ export function AppSidebar() {
             <SidebarMenu>
               {mainItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild tooltip={item.title}>
+                  <SidebarMenuButton asChild tooltip={item.title} isActive={isActive(item.url)}>
                     <Link to={item.url} className="transition-colors">
                       <item.icon className="text-gray-600" />
                       <span>{item.title}</span>
@@ -87,13 +110,36 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+        
+        <SidebarSeparator />
+        
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-xs font-medium text-gray-500">Categories</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {categoriesItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild tooltip={item.title} isActive={isActive(item.url)}>
+                    <Link to={item.url} className="transition-colors">
+                      <item.icon className="text-gray-600" />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        
+        <SidebarSeparator />
+        
         <SidebarGroup>
           <SidebarGroupLabel className="text-xs font-medium text-gray-500">Account</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {accountItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild tooltip={item.title}>
+                  <SidebarMenuButton asChild tooltip={item.title} isActive={isActive(item.url)}>
                     <Link to={item.url} className="transition-colors">
                       <item.icon className="text-gray-600" />
                       <span>{item.title}</span>
@@ -108,7 +154,7 @@ export function AppSidebar() {
       <SidebarFooter className="border-t">
         <div className="px-3 py-2">
           <div className="text-xs text-gray-500">
-            NoteMate PDF Analyzer v1.0
+            NoteMate AI Note Taking v1.0
           </div>
         </div>
       </SidebarFooter>
