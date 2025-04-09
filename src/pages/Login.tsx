@@ -4,10 +4,12 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import Logo from '@/components/Logo';
 import LoginForm from '@/components/LoginForm';
 import FloatingElements from '@/components/FloatingElements';
+import StockChartPattern from '@/components/StockChartPattern';
 
 const Login = () => {
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-indigo-50 to-gray-100 flex flex-col items-center justify-center p-4">
+      <StockChartPattern />
       <FloatingElements />
       
       <div className="w-full max-w-md z-10">
@@ -18,18 +20,18 @@ const Login = () => {
         <Card className="border-gray-200 shadow-sm backdrop-blur-sm bg-white/95">
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl font-bold text-center text-indigo-700">
-              Sign in to NoteMate
+              Sign in to StockSage
             </CardTitle>
             <CardDescription className="text-center text-gray-500">
-              Enter your credentials to access your notes
+              Enter your credentials to access your predictions
             </CardDescription>
           </CardHeader>
           <CardContent>
             <LoginForm />
           </CardContent>
           <CardFooter className="flex flex-col text-center text-xs text-gray-500 border-t pt-4">
-            <p>Powered by AI-assisted note taking</p>
-            <p>© 2025 NoteMate. All rights reserved.</p>
+            <p>Powered by AI stock prediction algorithms</p>
+            <p>© 2025 StockSage. All rights reserved.</p>
           </CardFooter>
         </Card>
       </div>

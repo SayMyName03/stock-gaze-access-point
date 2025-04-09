@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
-import { Mail, Lock, ArrowRight } from "lucide-react";
+import { Mail, Lock, ArrowRight, LineChart } from "lucide-react";
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
@@ -20,16 +20,16 @@ const LoginForm = () => {
 
     // Simulate API call to your Python backend
     try {
-      // This is where you would connect to your Python backend
+      // This is where you would connect to your Python StockSage backend
       // For now, we'll just simulate a successful login after a delay
       await new Promise(resolve => setTimeout(resolve, 1500));
       
       toast({
         title: "Success!",
-        description: "You've successfully logged in.",
+        description: "Welcome back to StockSage.",
       });
       
-      // Here you would redirect to the dashboard or handle the successful login
+      // Here you would redirect to the stock prediction dashboard or handle the successful login
       console.log("Login successful with:", { email, password, rememberMe });
     } catch (error) {
       toast({
@@ -48,7 +48,7 @@ const LoginForm = () => {
       <div className="space-y-2">
         <Label htmlFor="email" className="text-sm font-medium text-gray-700">Email</Label>
         <div className="relative">
-          <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-finance-gray" />
+          <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
           <Input
             id="email"
             type="email"
@@ -64,10 +64,10 @@ const LoginForm = () => {
       <div className="space-y-2">
         <div className="flex justify-between items-center">
           <Label htmlFor="password" className="text-sm font-medium text-gray-700">Password</Label>
-          <a href="#" className="text-sm text-finance-green hover:underline">Forgot password?</a>
+          <a href="#" className="text-sm text-indigo-600 hover:underline">Forgot password?</a>
         </div>
         <div className="relative">
-          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-finance-gray" />
+          <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
           <Input
             id="password"
             type="password"
@@ -96,7 +96,7 @@ const LoginForm = () => {
       
       <Button
         type="submit"
-        className="w-full bg-finance-blue hover:bg-finance-blue/90 text-white"
+        className="w-full bg-indigo-600 hover:bg-indigo-700 text-white"
         disabled={isLoading}
       >
         {isLoading ? (
@@ -117,7 +117,7 @@ const LoginForm = () => {
       <div className="text-center">
         <p className="text-sm text-gray-600">
           Don't have an account?{" "}
-          <a href="#" className="text-finance-green hover:underline">
+          <a href="#" className="text-indigo-600 hover:underline">
             Create an account
           </a>
         </p>
