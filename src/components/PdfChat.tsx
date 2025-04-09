@@ -5,6 +5,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Send, FileText } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
+import axios from 'axios';
+
+const API_KEY = process.env.REACT_APP_GEMINI_API_KEY;
+const API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
 
 interface PdfChatProps {
   pdfContent: string;
@@ -14,6 +18,16 @@ interface PdfChatProps {
 interface Message {
   role: 'user' | 'assistant';
   content: string;
+}
+
+interface GeminiResponse {
+  candidates: {
+    content: {
+      parts: {
+        text: string;
+      }[];
+    };
+  }[];
 }
 
 const PdfChat: React.FC<PdfChatProps> = ({ pdfContent, fileName }) => {
@@ -43,13 +57,38 @@ const PdfChat: React.FC<PdfChatProps> = ({ pdfContent, fileName }) => {
     setIsLoading(true);
     
     try {
-      // In a real implementation, this would call the Gemini API with the PDF content
-      const response = await mockGeminiResponse(userInput, pdfContent);
+      // Create a context from previous messages and PDF content
+      const context = messages
+        .map(msg => `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}`)
+        .join('\n');
+      
+      const response = await axios.post<GeminiResponse>(
+        `${API_URL}?key=${API_KEY}`,
+        {
+          contents: [
+            {
+              parts: [
+                {
+                  text: `You are an AI assistant analyzing a PDF document. 
+                  The document content is: """${pdfContent}""".
+                  
+                  Previous conversation:
+                  ${context}
+                  
+                  User: ${userInput}
+                  
+                  Provide a helpful response about the document based on the user's question.`,
+                },
+              ],
+            },
+          ],
+        }
+      );
       
       // Add assistant response to chat
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: response,
+        content: response.data.candidates[0].content.parts[0].text,
       }]);
     } catch (error) {
       console.error('Error communicating with Gemini API:', error);
@@ -58,20 +97,15 @@ const PdfChat: React.FC<PdfChatProps> = ({ pdfContent, fileName }) => {
         description: 'There was a problem getting a response from our AI service.',
         variant: 'destructive',
       });
+      
+      // Add error message to chat
+      setMessages(prev => [...prev, {
+        role: 'assistant',
+        content: 'Sorry, I encountered an error while processing your question. Please try again.',
+      }]);
     } finally {
       setIsLoading(false);
     }
-  };
-
-  // This is a mock function to simulate the Gemini API response
-  // In a real implementation, you would call the actual Gemini API
-  const mockGeminiResponse = async (question: string, pdfContent: string): Promise<string> => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        // Simple mock response - in a real app, this would be the Gemini API response
-        resolve(`This is a simulated response to your question about the PDF. In a real implementation, the Gemini API would analyze the content and provide a relevant answer based on the document contents.`);
-      }, 1500);
-    });
   };
 
   return (

@@ -1,6 +1,6 @@
+
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import axios from 'axios';
 import {
   BookText,
   Home,
@@ -13,6 +13,7 @@ import {
   Search,
   UploadCloud,
 } from 'lucide-react';
+import { useToast } from "@/hooks/use-toast";
 import Logo from './Logo';
 import {
   Sidebar,
@@ -27,39 +28,58 @@ import {
   SidebarFooter,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
+import { analyzeDocument } from '@/services/geminiService';
 
 export function AppSidebar() {
   const location = useLocation();
   const [uploading, setUploading] = useState(false);
-  const [analysisResult, setAnalysisResult] = useState(null);
+  const [analysisResult, setAnalysisResult] = useState<string | null>(null);
+  const { toast } = useToast();
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
     setUploading(true);
+    toast({
+      title: "Processing document",
+      description: "Please wait while we analyze your document...",
+    });
 
     try {
-      const formData = new FormData();
-      formData.append('file', file);
-
-      // Retrieve the API key from the environment variable
-      const apiKey = process.env.REACT_APP_GEMINI_API_KEY;
-
-      const response = await axios.post('https://api.gemini.com/analyze', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${apiKey}`, // Use the API key from .env
-        },
+      // Read the file as text
+      const text = await readFileAsText(file);
+      
+      // Send to Gemini API for analysis
+      const analysis = await analyzeDocument(text);
+      
+      setAnalysisResult(analysis);
+      toast({
+        title: "Analysis complete",
+        description: "Your document has been analyzed successfully",
       });
-
-      setAnalysisResult(response.data);
-      console.log('Analysis Result:', response.data);
     } catch (error) {
-      console.error('Error uploading file:', error);
+      console.error('Error processing document:', error);
+      toast({
+        title: "Error processing document",
+        description: "There was a problem analyzing your document",
+        variant: "destructive",
+      });
     } finally {
       setUploading(false);
     }
+  };
+
+  // Function to read file content as text
+  const readFileAsText = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        resolve(reader.result as string);
+      };
+      reader.onerror = reject;
+      reader.readAsText(file);
+    });
   };
 
   const mainItems = [
@@ -135,9 +155,10 @@ export function AppSidebar() {
                     <span>Upload Document</span>
                     <input
                       type="file"
-                      accept=".pdf,.doc,.docx"
+                      accept=".pdf,.doc,.docx,.txt"
                       className="hidden"
                       onChange={handleFileUpload}
+                      disabled={uploading}
                     />
                   </label>
                 </SidebarMenuButton>
@@ -201,10 +222,10 @@ export function AppSidebar() {
           <div className="text-xs text-gray-500">
             NoteMate AI Note Taking v1.0
           </div>
-          {uploading && <div className="text-xs text-blue-500">Uploading...</div>}
+          {uploading && <div className="text-xs text-blue-500">Analyzing document...</div>}
           {analysisResult && (
-            <div className="text-xs text-green-500">
-              Analysis Complete: {JSON.stringify(analysisResult)}
+            <div className="text-xs text-green-500 max-h-20 overflow-y-auto">
+              Analysis complete. {analysisResult.substring(0, 100)}...
             </div>
           )}
         </div>
